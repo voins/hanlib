@@ -44,5 +44,21 @@ auto main() -> int {
         };
     };
 
+    "[maybe::then_do() with void(T)]"_test = [] {
+        "value present"_test = [] {
+            bool run = false;
+            auto value = helper(true, 5).then_do([&](auto&&) { run = true; });
+            expect(run);
+            expect(that % value.or_else(10) == 5);
+        };
+
+        "value missing"_test = [] {
+            bool run = false;
+            auto value = helper(false, 5).then_do([&](auto&&) { run = true; });
+            expect(!run);
+            expect(that % value.or_else(10) == 10);
+        };
+    };
+
     return 0;
 }
