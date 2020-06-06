@@ -9,6 +9,7 @@ auto helper(bool present, T&& value) -> han::maybe<T> {
 
 auto main() -> int {
     using namespace boost::ut;
+    using namespace std::literals;
 
     "[maybe::or_else()]"_test = [] {
         "value present"_test = [] {
@@ -28,6 +29,18 @@ auto main() -> int {
         "value missing"_test = [] {
             auto value = helper(false, 5).then_do([](auto&& x) { return x * 3; });
             expect(that % value.or_else(10) == 10);
+        };
+    };
+
+    "[maybe::then_do() changes type]"_test = [] {
+        "value present"_test = [] {
+            auto value = helper(true, 5).then_do([](auto&&) { return "aaa"s; });
+            expect(that % value.or_else("bbb"s) == "aaa"s);
+        };
+
+        "value missing"_test = [] {
+            auto value = helper(false, 5).then_do([](auto&&) { return "aaa"s; });
+            expect(that % value.or_else("bbb"s) == "bbb"s);
         };
     };
 
