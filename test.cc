@@ -60,5 +60,32 @@ auto main() -> int {
         };
     };
 
+    "[maybe::or_else_do()]"_test = [] {
+        "value present"_test = [] {
+            auto value = helper(true, 5).or_else_do([] { return 10; });
+            expect(that % value.or_else(15) == 5);
+        };
+        "value missing"_test = [] {
+            auto value = helper(false, 5).or_else_do([] { return 10; });
+            expect(that % value.or_else(15) == 10);
+        };
+    };
+
+    "[maybe::or_else_do() with void()]"_test = [] {
+        "value present"_test = [] {
+            bool run = false;
+            auto value = helper(true, 5).or_else_do([&]() { run = true; });
+            expect(!run);
+            expect(that % value.or_else(10) == 5);
+        };
+
+        "value missing"_test = [] {
+            bool run = false;
+            auto value = helper(false, 5).or_else_do([&]() { run = true; });
+            expect(run);
+            expect(that % value.or_else(10) == 10);
+        };
+    };
+
     return 0;
 }
