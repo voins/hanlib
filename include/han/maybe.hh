@@ -13,6 +13,11 @@ namespace han {
         constexpr explicit maybe(T value): data(std::move(value)) {}
         constexpr maybe(const maybe&) = default;
         constexpr maybe(maybe&&) = default;
+
+        constexpr auto or_else(T alt) const -> T {
+            if (data) return *data;
+            else return alt;
+        }
     };
 
     template <typename T> maybe(T) -> maybe<T>;

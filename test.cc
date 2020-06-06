@@ -10,8 +10,13 @@ auto helper(bool present, T&& value) -> han::maybe<T> {
 auto main() -> int {
     using namespace boost::ut;
 
-    "hello"_test = [] {
-        helper(true, 5);
+    "[maybe::or_else()]"_test = [] {
+        "value present"_test = [] {
+            expect(that % helper(true, 5).or_else(10) == 5);
+        };
+        "value missing"_test = [] {
+            expect(that % helper(false, 5).or_else(10) == 10);
+        };
     };
 
     return 0;
