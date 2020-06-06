@@ -1,6 +1,7 @@
 #ifndef HAN_MAYBE_HH
 #define HAN_MAYBE_HH
 #include <optional>
+#include <functional>
 
 namespace han {
     template <typename T>
@@ -17,6 +18,12 @@ namespace han {
         constexpr auto or_else(T alt) const -> T {
             if (data) return *data;
             else return alt;
+        }
+
+        template <typename C>
+        constexpr auto then_do(C&& code) const {
+            if (data) return maybe{std::invoke(std::forward<C>(code), *data)};
+            else return maybe{std::nullopt};
         }
     };
 

@@ -19,5 +19,17 @@ auto main() -> int {
         };
     };
 
+    "[maybe::then_do()]"_test = [] {
+        "value present"_test = [] {
+            auto value = helper(true, 5).then_do([](auto&& x) { return x * 3; });
+            expect(that % value.or_else(10) == 15);
+        };
+
+        "value missing"_test = [] {
+            auto value = helper(false, 5).then_do([](auto&& x) { return x * 3; });
+            expect(that % value.or_else(10) == 10);
+        };
+    };
+
     return 0;
 }
