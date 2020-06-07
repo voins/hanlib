@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(hanlib CXX)
 
-add_executable(test test.cc)
-target_compile_features(test PRIVATE cxx_std_17)
-target_include_directories(test PRIVATE include)
-target_compile_options(test PRIVATE
+enable_testing()
+
+add_executable(test-maybe test.cc)
+target_compile_features(test-maybe PRIVATE cxx_std_17)
+target_include_directories(test-maybe PRIVATE include)
+target_compile_options(test-maybe PRIVATE
     -Weverything
     -Werror
     -pedantic
@@ -18,3 +20,5 @@ target_compile_options(test PRIVATE
     -Wno-padded
     -Wno-ctad-maybe-unsupported
     -Wno-c++2a-extensions)
+
+add_test(test-maybe test-maybe)
