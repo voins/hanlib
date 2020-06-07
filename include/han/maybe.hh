@@ -15,9 +15,24 @@ namespace han {
         constexpr maybe(const maybe&) = default;
         constexpr maybe(maybe&&) = default;
 
-        constexpr auto or_else(T alt) const -> T {
+        constexpr auto or_else(const T& alt) const& -> T {
             if (data) return *data;
             else return alt;
+        }
+
+        constexpr auto or_else(T&& alt) const& -> T {
+            if (data) return *data;
+            else return std::move(alt);
+        }
+
+        constexpr auto or_else(const T& alt) && -> T {
+            if (data) return std::move(*data);
+            else return alt;
+        }
+
+        constexpr auto or_else(T&& alt) && -> T {
+            if (data) return std::move(*data);
+            else return std::move(alt);
         }
 
         template <typename C,
