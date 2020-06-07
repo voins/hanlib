@@ -114,5 +114,32 @@ auto main() -> int {
         };
     };
 
+    "[maybe::or_maybe()]"_test = [] {
+        "both values present"_test = [] {
+            auto value = helper(true, 5).or_maybe([] {
+                return helper(true, 10);
+            });
+            expect(that % value.or_else(15) == 5);
+        };
+        "main value present, transformed value missing"_test = [] {
+            auto value = helper(true, 5).or_maybe([] {
+                return helper(false, 0);
+            });
+            expect(that % value.or_else(15) == 5);
+        };
+        "main value missing, transformed value present"_test = [] {
+            auto value = helper(false, 5).or_maybe([] {
+                return helper(true, 10);
+            });
+            expect(that % value.or_else(15) == 10);
+        };
+        "both values missing"_test = [] {
+            auto value = helper(false, 5).or_maybe([] {
+                return helper(false, 10);
+            });
+            expect(that % value.or_else(15) == 15);
+        };
+    };
+
     return 0;
 }

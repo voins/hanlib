@@ -60,6 +60,12 @@ namespace han {
             else return ensure_type(R{std::nullopt});
         }
 
+        template <typename C>
+        constexpr auto or_maybe(C&& code) const -> maybe<T> {
+            if (!data) return std::invoke(std::forward<C>(code));
+            else return *this;
+        }
+
     private:
         template <typename U>
         constexpr static auto ensure_type(maybe<U> value) -> maybe<U> {
