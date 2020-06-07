@@ -87,5 +87,32 @@ auto main() -> int {
         };
     };
 
+    "[maybe::then_maybe()]"_test = [] {
+        "both values present"_test = [] {
+            auto value = helper(true, 5).then_maybe([](auto&&) {
+                return helper(true, 10);
+            });
+            expect(that % value.or_else(15) == 10);
+        };
+        "main value present, transformed value missing"_test = [] {
+            auto value = helper(true, 5).then_maybe([](auto&&) {
+                return helper(false, 0);
+            });
+            expect(that % value.or_else(15) == 15);
+        };
+        "main value missing, transformed value present"_test = [] {
+            auto value = helper(false, 5).then_maybe([](auto&&) {
+                return helper(true, 10);
+            });
+            expect(that % value.or_else(15) == 15);
+        };
+        "both values missing"_test = [] {
+            auto value = helper(false, 5).then_maybe([](auto&&) {
+                return helper(false, 10);
+            });
+            expect(that % value.or_else(15) == 15);
+        };
+    };
+
     return 0;
 }
