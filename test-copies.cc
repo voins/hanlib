@@ -100,5 +100,39 @@ auto main() -> int {
         };
     };
 
+    "[copies in then_do()]"_test = [] {
+        "lvalue a"_test = [] {
+            "value present, copy a"_test = [] {
+                auto m = mocker::expect_copies("a");
+                auto a = helper(true, m.mock('a'));
+                auto b = m.mock('b');
+                auto val = a.then_do([](auto&& x){ return std::move(x); });
+                expect(that % std::move(val).or_else(b).x == 'a');
+            };
+            "value missing, no copies"_test = [] {
+                auto m = mocker::expect_copies("");
+                auto a = helper(false, m.mock('a'));
+                auto b = m.mock('b');
+                auto val = a.then_do([](auto&& x){ return std::move(x); });
+                expect(that % std::move(val).or_else(std::move(b)).x == 'b');
+            };
+        };
+        "rvalue a"_test = [] {
+            "value present, no copies"_test = [] {
+                auto m = mocker::expect_copies("");
+                auto a = helper(true, m.mock('a'));
+                auto b = m.mock('b');
+                auto val = std::move(a).then_do([](auto&& x){ return std::move(x); });
+                expect(that % std::move(val).or_else(b).x == 'a');
+            };
+            "value missing, no copies"_test = [] {
+                auto m = mocker::expect_copies("");
+                auto a = helper(false, m.mock('a'));
+                auto b = m.mock('b');
+                auto val = std::move(a).then_do([](auto&& x){ return std::move(x); });
+                expect(that % std::move(val).or_else(std::move(b)).x == 'b');
+            };
+        };
+    };
     return 0;
 }
