@@ -134,5 +134,48 @@ auto main() -> int {
             };
         };
     };
+
+    "[copies in then_do() of void(...)]"_test = [] {
+        "lvalue a"_test = [] {
+            "value present, copy a"_test = [] {
+                auto m = mocker::expect_copies("a");
+                auto a = helper(true, m.mock('a'));
+                auto b = m.mock('b');
+                auto extracted = '\0';
+                auto val = a.then_do([&](auto&& x){ extracted = x.x; });
+                expect(that % std::move(val).or_else(b).x == 'a');
+                expect(that % extracted == 'a');
+            };
+            "value missing, no copies"_test = [] {
+                auto m = mocker::expect_copies("");
+                auto a = helper(false, m.mock('a'));
+                auto b = m.mock('b');
+                auto extracted = '\0';
+                auto val = a.then_do([&](auto&& x){ extracted = x.x; });
+                expect(that % std::move(val).or_else(std::move(b)).x == 'b');
+                expect(that % extracted == '\0');
+            };
+        };
+        "rvalue a"_test = [] {
+            "value present, no copies"_test = [] {
+                auto m = mocker::expect_copies("");
+                auto a = helper(true, m.mock('a'));
+                auto b = m.mock('b');
+                auto extracted = '\0';
+                auto val = std::move(a).then_do([&](auto&& x){ extracted = x.x; });
+                expect(that % std::move(val).or_else(b).x == 'a');
+                expect(that % extracted == 'a');
+            };
+            "value missing, no copies"_test = [] {
+                auto m = mocker::expect_copies("");
+                auto a = helper(false, m.mock('a'));
+                auto b = m.mock('b');
+                auto extracted = '\0';
+                auto val = std::move(a).then_do([&](auto&& x){ extracted = x.x; });
+                expect(that % std::move(val).or_else(std::move(b)).x == 'b');
+                expect(that % extracted == '\0');
+            };
+        };
+    };
     return 0;
 }

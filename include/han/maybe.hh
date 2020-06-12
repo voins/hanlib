@@ -54,9 +54,17 @@ namespace han {
         template <typename C,
                   typename R = std::result_of_t<C(T)>,
                   typename = std::enable_if_t<std::is_void_v<R>>>
-        constexpr auto then_do(C&& code) const -> maybe<T> {
+        constexpr auto then_do(C&& code) const& -> maybe<T> {
             if (data) std::invoke(std::forward<C>(code), *data);
             return *this;
+        }
+
+        template <typename C,
+                  typename R = std::result_of_t<C(T)>,
+                  typename = std::enable_if_t<std::is_void_v<R>>>
+        constexpr auto then_do(C&& code) && -> maybe<T> {
+            if (data) std::invoke(std::forward<C>(code), *data);
+            return std::move(*this);
         }
 
         template <typename C,
