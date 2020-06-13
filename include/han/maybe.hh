@@ -10,7 +10,7 @@ namespace han {
     public:
         constexpr maybe() noexcept = default;
         constexpr maybe(std::nullopt_t) noexcept {}
-        constexpr explicit maybe(T&& value): data(std::forward<T>(value)) {}
+        constexpr explicit maybe(T value): data(std::move(value)) {}
         constexpr maybe(const maybe&) = default;
         constexpr maybe(maybe&&) = default;
     };
