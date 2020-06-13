@@ -116,9 +116,15 @@ namespace han {
         }
 
         template <typename C>
-        constexpr auto or_maybe(C&& code) const -> maybe<T> {
+        constexpr auto or_maybe(C&& code) const& -> maybe<T> {
             if (!data) return std::invoke(std::forward<C>(code));
             else return *this;
+        }
+
+        template <typename C>
+        constexpr auto or_maybe(C&& code) && -> maybe<T> {
+            if (!data) return std::invoke(std::forward<C>(code));
+            else return std::move(*this);
         }
 
     private:
