@@ -103,7 +103,14 @@ namespace han {
 
         template <typename C,
                   typename R = std::result_of_t<C(T)>>
-        constexpr auto then_maybe(C&& code) const -> R {
+        constexpr auto then_maybe(C&& code) const& -> R {
+            if (data) return ensure_type(std::invoke(std::forward<C>(code), *data));
+            else return ensure_type(R{std::nullopt});
+        }
+
+        template <typename C,
+                  typename R = std::result_of_t<C(T)>>
+        constexpr auto then_maybe(C&& code) && -> R {
             if (data) return ensure_type(std::invoke(std::forward<C>(code), *data));
             else return ensure_type(R{std::nullopt});
         }
